@@ -42,7 +42,32 @@ export const http = <T>(options: UniApp.RequestOptions) => {
       ...options,
       //成功回调
       success(res) {
-        resolve(res.data as Data<T>)
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(res.data as Data<T>)
+        } else if (res.statusCode === 401) {
+          //401未授权//清除会员信息
+          const memberStore = useMemberStore()
+          memberStore.clearProfile()
+          //跳转到登录页
+          uni.navigateTo({
+            url: '/pages/login/login',
+          })
+          reject(res.data)
+        } else {
+          uni.showToast({
+            icon: 'none',
+            title: (res.data as Data<T>).msg || '请求失败',
+          })
+          reject(res.data)
+        }
+      },
+      //失败回调
+      fail(err) {
+        uni.showToast({
+          icon: 'none',
+          title: err.errMsg || '网络错误',
+        })
+        reject(err)
       },
     })
   })
