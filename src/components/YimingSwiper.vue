@@ -1,33 +1,32 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import type { BannerItem } from '@/types/home'
 
 const activeIndex = ref(0)
+// 监听轮播图切换
+const onChange: UniHelper.SwiperOnChange = (ev) => {
+  //console.log(ev.detail?.current)
+  activeIndex.value = ev.detail?.current || 0
+}
+defineProps<{
+  list: BannerItem[]
+}>()
 </script>
 
 <template>
   <view class="carousel">
-    <swiper :circular="true" :autoplay="false" :interval="3000">
-      <swiper-item>
+    <swiper :circular="true" :autoplay="false" :interval="3000" @change="onChange">
+      <swiper-item v-for="item in list" :key="item.id">
         <navigator url="/pages/index/index" hover-class="none" class="navigator">
-          <image mode="aspectFill" class="image" src="/static/images/page_1.jpg"></image>
-        </navigator>
-      </swiper-item>
-      <swiper-item>
-        <navigator url="/pages/index/index" hover-class="none" class="navigator">
-          <image mode="aspectFill" class="image" src="/static/images/page_2.jpg"></image>
-        </navigator>
-      </swiper-item>
-      <swiper-item>
-        <navigator url="/pages/index/index" hover-class="none" class="navigator">
-          <image mode="aspectFill" class="image" src="/static/images/page_3.jpg"></image>
+          <image mode="aspectFill" class="image" :src="item.imgUrl"></image>
         </navigator>
       </swiper-item>
     </swiper>
     <!-- 指示点 -->
     <view class="indicator">
       <text
-        v-for="(item, index) in 3"
-        :key="item"
+        v-for="(item, index) in list"
+        :key="item.id"
         class="dot"
         :class="{ active: index === activeIndex }"
       ></text>
