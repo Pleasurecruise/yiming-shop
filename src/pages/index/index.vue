@@ -28,10 +28,28 @@ const getHomeHotData = async () => {
 }
 //获取猜你喜欢数据
 const guessRef = ref<YimingGuessInstance>()
-
 const onScrolltolower = () => {
   guessRef.value?.getMore()
 }
+// 刷新
+const onRefresherrefresh = async () => {
+  // 刷新后打开下拉刷新
+  isTriggered.value = true
+  // await getHomeHotData()
+  // await getHomeBannerData()
+  // await getHomeCategoryData()
+  guessRef.value?.resetData()
+  await Promise.all([
+    getHomeHotData(),
+    getHomeBannerData(),
+    getHomeCategoryData(),
+    guessRef.value?.getMore(),
+  ])
+  // 刷新后关闭下拉刷新
+  isTriggered.value = false
+}
+// 刷新后是否触发下拉刷新
+const isTriggered = ref(false)
 // 页面加载时获取数据
 onLoad(() => {
   getHomeBannerData()
@@ -43,7 +61,14 @@ onLoad(() => {
 <template>
   <!-- 自定义导航栏 -->
   <CustomNavbar></CustomNavbar>
-  <scroll-view @scrolltolower="onScrolltolower" class="scroller-view" scroll-y>
+  <scroll-view
+    refresher-enabled
+    @refresherrefresh="onRefresherrefresh"
+    :refresher-triggered="isTriggered"
+    @scrolltolower="onScrolltolower"
+    class="scroller-view"
+    scroll-y
+  >
     <!-- 轮播图 -->
     <YimingSwiper :list="bannerList" />
     <!-- 分类面板 -->
