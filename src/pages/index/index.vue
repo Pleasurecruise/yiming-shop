@@ -6,6 +6,7 @@ import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import CustomNavbar from '@/pages/index/compomemts/CustomNavbar.vue'
 import CategoryPanel from '@/pages/index/compomemts/CategoryPanel.vue'
 import HotPanel from '@/pages/index/compomemts/HotPanel.vue'
+import PageSkeleton from '@/pages/index/compomemts/PageSkeleton.vue'
 import type { YimingGuessInstance } from '@/types/component'
 // 轮播图数据
 const bannerList = ref<BannerItem[]>([])
@@ -50,11 +51,13 @@ const onRefresherrefresh = async () => {
 }
 // 刷新后是否触发下拉刷新
 const isTriggered = ref(false)
+const isLoading = ref(false)
 // 页面加载时获取数据
-onLoad(() => {
-  getHomeBannerData()
-  getHomeCategoryData()
-  getHomeHotData()
+onLoad(async () => {
+  isLoading.value = true
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+  // 页面加载完成后关闭骨架屏
+  isLoading.value = false
 })
 </script>
 
@@ -69,14 +72,18 @@ onLoad(() => {
     class="scroller-view"
     scroll-y
   >
-    <!-- 轮播图 -->
-    <YimingSwiper :list="bannerList" />
-    <!-- 分类面板 -->
-    <CategoryPanel :list="categoryList" />
-    <!-- 热门推荐 -->
-    <HotPanel :list="hotList" />
-    <!--猜你喜欢 -->
-    <YimingGuess ref="guessRef" />
+    <!-- 页面骨架屏 -->
+    <PageSkeleton v-if="isLoading" />
+    <template v-else>
+      <!-- 轮播图 -->
+      <YimingSwiper :list="bannerList" />
+      <!-- 分类面板 -->
+      <CategoryPanel :list="categoryList" />
+      <!-- 热门推荐 -->
+      <HotPanel :list="hotList" />
+      <!--猜你喜欢 -->
+      <YimingGuess ref="guessRef" />
+    </template>
   </scroll-view>
 </template>
 
