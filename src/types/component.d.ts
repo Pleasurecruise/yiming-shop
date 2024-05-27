@@ -7,3 +7,4 @@ declare module '@vue/runtime-core' {
     YimingGuess: typeof YimingGuess
   }
 }
+export type YimingGuessInstance = InstanceType<typeof YimingGuess>

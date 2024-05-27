@@ -6,6 +6,7 @@ import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import CustomNavbar from '@/pages/index/compomemts/CustomNavbar.vue'
 import CategoryPanel from '@/pages/index/compomemts/CategoryPanel.vue'
 import HotPanel from '@/pages/index/compomemts/HotPanel.vue'
+import type { YimingGuessInstance } from '@/types/component'
 // 轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -25,6 +26,12 @@ const getHomeHotData = async () => {
   const res = await getHomeHotAPI()
   hotList.value = res.result
 }
+//获取猜你喜欢数据
+const guessRef = ref<YimingGuessInstance>()
+
+const onScrolltolower = () => {
+  guessRef.value?.getMore()
+}
 // 页面加载时获取数据
 onLoad(() => {
   getHomeBannerData()
@@ -36,7 +43,7 @@ onLoad(() => {
 <template>
   <!-- 自定义导航栏 -->
   <CustomNavbar></CustomNavbar>
-  <scroll-view scroll-y>
+  <scroll-view @scrolltolower="onScrolltolower" class="scroller-view" scroll-y>
     <!-- 轮播图 -->
     <YimingSwiper :list="bannerList" />
     <!-- 分类面板 -->
@@ -44,7 +51,7 @@ onLoad(() => {
     <!-- 热门推荐 -->
     <HotPanel :list="hotList" />
     <!--猜你喜欢 -->
-    <YimingGuess></YimingGuess>
+    <YimingGuess ref="guessRef" />
   </scroll-view>
 </template>
 
