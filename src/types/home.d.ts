@@ -11,3 +11,12 @@ export type CategoryItem = {
   id: string
   name: string
 }
+// 热销商品
+export type HotItem = {
+  alt: string
+  id: string
+  pictures: string[]
+  target: string
+  title: string
+  type: string
+}
