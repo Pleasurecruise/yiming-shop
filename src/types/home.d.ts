@@ -1,4 +1,6 @@
 // 轮播图
+import type { GoodsItem } from '@/types/global'
+
 export type BannerItem = {
   hrefUrl: string
   id: string
@@ -21,12 +23,4 @@ export type HotItem = {
   type: string
 }
 // 猜你喜欢
-export type GuessItem = {
-  desc: string
-  discount: number
-  id: string
-  name: string
-  orderNum: number
-  picture: string
-  price: number
-}
+export type GuessItem = GoodsItem
